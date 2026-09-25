@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+// eslint-disable-next-line no-undef
 const jwt = require("jsonwebtoken");
 
 const authMiddleware = (req, res, next) => {
@@ -11,7 +11,11 @@ const authMiddleware = (req, res, next) => {
       });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(
+      token,
+      // eslint-disable-next-line no-undef
+      process.env.JWT_SECRET
+    );
 
     req.userId = decoded.userId;
 
@@ -19,9 +23,10 @@ const authMiddleware = (req, res, next) => {
   } catch (error) {
     return res.status(401).json({
       message: "Invalid or expired token",
-      error: error,
+      error:error,
     });
   }
 };
 
+// eslint-disable-next-line no-undef
 module.exports = authMiddleware;
