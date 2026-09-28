@@ -25,7 +25,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://taskly-frontend-ten.vercel.app/signup",
+    origin: "https://taskly-frontend-ten.vercel.app",
     credentials: true,
   }),
 );
