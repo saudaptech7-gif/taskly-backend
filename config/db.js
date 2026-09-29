@@ -6,6 +6,7 @@ const connectDB = async () => {
     return;
   }
 
+  mongoose.set("bufferTimeoutMS", 50000);
   // eslint-disable-next-line no-undef
   await mongoose.connect(process.env.MONGO_URI);
 
