@@ -21,11 +21,15 @@ const authMiddleware = require("./middleware/authMiddleware");
 
 const app = express();
 
+// eslint-disable-next-line no-undef
+const isProduction = process.env.NODE_ENV === "production";
+
 // ==================== MIDDLEWARE ====================
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    // eslint-disable-next-line no-undef
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
     credentials: true,
   }),
 );
@@ -124,8 +128,8 @@ app.post("/login", async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
       maxAge: 24 * 60 * 60 * 1000,
     });
 
@@ -175,8 +179,8 @@ app.get("/auth/me", authMiddleware, async (req, res) => {
 app.post("/logout", (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: false,
-    sameSite: "lax",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
   });
 
   res.json({
