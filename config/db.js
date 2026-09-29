@@ -1,17 +1,38 @@
 // eslint-disable-next-line no-undef
 const mongoose = require("mongoose");
 
-const connectDB = async () => {
-  if (mongoose.connection.readyState === 1) {
-    return;
+// eslint-disable-next-line no-undef
+let cached = global.mongoose;
+
+if (!cached) {
+  // eslint-disable-next-line no-undef
+  cached = global.mongoose = { conn: null, promise: null };
+}
+
+async function connectDB() {
+  if (cached.conn) {
+    return cached.conn;
   }
 
-  mongoose.set("bufferTimeoutMS", 50000);
-  // eslint-disable-next-line no-undef
-  await mongoose.connect(process.env.MONGO_URI);
+  if (!cached.promise) {
+    const opts = {
+      bufferCommands: false, // Prevents 10000ms buffering timeouts
+      serverSelectionTimeoutMS: 5000,
+    };
 
-  console.log("MongoDB Connected");
-};
+    // eslint-disable-next-line no-undef
+    cached.promise = mongoose.connect(process.env.MONGO_URI, opts).then((m) => m);
+  }
+
+  try {
+    cached.conn = await cached.promise;
+  } catch (e) {
+    cached.promise = null;
+    throw e;
+  }
+
+  return cached.conn;
+}
 
 // eslint-disable-next-line no-undef
 module.exports = connectDB;
