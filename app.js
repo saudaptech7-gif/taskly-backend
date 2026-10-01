@@ -1,4 +1,6 @@
 // eslint-disable-next-line no-undef
+require("dotenv").config();
+// eslint-disable-next-line no-undef
 const express = require("express");
 // eslint-disable-next-line no-undef
 const cors = require("cors");
@@ -8,9 +10,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 // eslint-disable-next-line no-undef
 const cookieParser = require("cookie-parser");
-
 // eslint-disable-next-line no-undef
-require("dotenv").config();
+const connectDB = require("./config/db");
 
 // eslint-disable-next-line no-undef
 const User = require("./models/User");
@@ -36,6 +37,18 @@ app.use(
 
 app.use(express.json());
 app.use(cookieParser());
+
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    console.error("MongoDB connection error:", error.message);
+    res
+      .status(500)
+      .json({ message: "Database connection failed", error: error.message });
+  }
+});
 
 // ==================== HOME ====================
 

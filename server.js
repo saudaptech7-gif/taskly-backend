@@ -1,10 +1,9 @@
 // eslint-disable-next-line no-undef
+require("dotenv").config();
+// eslint-disable-next-line no-undef
 const app = require("./app");
 // eslint-disable-next-line no-undef
 const connectDB = require("./config/db");
-
-// eslint-disable-next-line no-undef
-require("dotenv").config();
 
 connectDB()
   .then(() => {
